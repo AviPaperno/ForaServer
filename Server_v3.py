@@ -6,21 +6,27 @@ import time
 import serial
 import Adafruit_PCA9685
 
-pwm_head = Adafruit_PCA9685.PCA9685(address=0x40)
-pwm_left_arm = Adafruit_PCA9685.PCA9685(address=0x41)
-pwm_right_arm = Adafruit_PCA9685.PCA9685(address=0x42)
-pwm_head.set_pwm_freq(60)
-pwm_left_arm.set_pwm_freq(60)
-pwm_right_arm.set_pwm_freq(60)
+INIT_STATUS = []
 
-Names = {'head' : pwm_head, 'left' : pwm_left_arm, 'right' : pwm_right_arm}
+try:
+        pwm_head = Adafruit_PCA9685.PCA9685(address=0x40)
+        pwm_left_arm = Adafruit_PCA9685.PCA9685(address=0x41)
+        pwm_right_arm = Adafruit_PCA9685.PCA9685(address=0x42)
+        pwm_head.set_pwm_freq(60)
+        pwm_left_arm.set_pwm_freq(60)
+        pwm_right_arm.set_pwm_freq(60)
+
+        Names = {'head' : pwm_head, 'left' : pwm_left_arm, 'right' : pwm_right_arm}
+        INIT_STATUS.append("YES")
+except:
+        INIT_STATUS.append("NO")
 
 HOST = ''  # Symbolic name meaning all available interfaces
 PORT = 8888 # Arbitrary non-privileged port
 
 ser = ''
 
-LED_COUNT      = 8      # Number of LED pixels.
+LED_COUNT      = 16      # Number of LED pixels.
 LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
@@ -51,11 +57,12 @@ print('Socket created')
 
 try:
     ser = serial.Serial()
-    ser.port = '/dev/ttyS0'
+    ser.port = '/dev/ttyACM0'
     ser.baudrate = 115200
     ser.open()
+    INIT_STATUS.append("YES")
 except:
-    pass
+    INIT_STATUS.append("NO")
 
 # Bind socket to local host and port
 try:
@@ -64,11 +71,14 @@ except socket.error as msg:
     print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
     sys.exit()
 
+
 print('Socket bind complete')
 
 # Start listening on socket
 s.listen(10)
 print ('Socket now listening')
+
+print("Status of connection: \n PWM - {}\n Serial - {}\n".format(INIT_STATUS[0],INIT_STATUS[1])
 
 
 # Function for handling connections. This will be used to create threads
@@ -95,13 +105,13 @@ def clientthread(conn):
         elif (MyData[0]=="M"):
             pwm.set_pwm(2,0,int(MyData[1:]))
         elif (MyData=="Радость"):
-            print("OK")
+            ser.write('1n'.encode('utf-8'))
             colorWipe(strip, Color(255, 0, 0))
         elif (MyData=="Грусть"):
             print("OK")
             colorWipe(strip, Color(0, 255, 0))
         elif (MyData=="Ровное"):
-            print("OK")
+            ser.write('0n'.encode('utf-8'))
             colorWipe(strip, Color(0, 0, 0))
         elif (MyData[0] == "S"):
                 tmp = MyData[1:].split("/")
