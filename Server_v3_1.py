@@ -108,7 +108,7 @@ def clientthread(conn):
                 tmp2 = tmp[0].split('_')
                 if (len(tmp) == 2):
                         print("tmp: {}\ntmp2: {}".format(tmp,tmp2))
-                        Names[tmp2[0]].set_pwm(int(tmp2[1]),0,int(float(tmp[1]))
+                        Names[tmp2[0]].set_pwm(int(tmp2[1]),0,int(float(tmp[1])))
         reply = data
         if not data:
             break
