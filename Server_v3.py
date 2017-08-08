@@ -51,7 +51,7 @@ print('Socket created')
 
 try:
     ser = serial.Serial()
-    ser.port = '/dev/ttyACM0'
+    ser.port = '/dev/ttyS0'
     ser.baudrate = 115200
     ser.open()
 except:
@@ -106,7 +106,9 @@ def clientthread(conn):
         elif (MyData[0] == "S"):
                 tmp = MyData[1:].split("/")
                 tmp2 = tmp[0].split('_')
-                Names[tmp2[0]].set_pwm(int(tmp2[1]),0,int(float(tmp[1])))
+                if (len(tmp) == 2):
+                        print("tmp: {}\ntmp2: {}".format(tmp,tmp2))
+                        Names[tmp2[0]].set_pwm(int(tmp2[1]),0,int(float(tmp[1])))
         reply = data
         if not data:
             break
