@@ -106,8 +106,9 @@ def clientthread(conn):
         elif (MyData[0] == "S"):
                 tmp = MyData[1:].split("/")
                 tmp2 = tmp[0].split('_')
-                print("tmp: {}\ntmp2: {}".format(tmp,tmp2))
-                Names[tmp2[0]].set_pwm(int(tmp2[1]),0,int())
+                if (len(tmp) == 2):
+                        print("tmp: {}\ntmp2: {}".format(tmp,tmp2))
+                        Names[tmp2[0]].set_pwm(int(tmp2[1]),0,int(float(tmp[1]))
         reply = data
         if not data:
             break
