@@ -103,10 +103,10 @@ def clientthread(conn):
         elif (MyData=="Ровное"):
             print("OK")
             colorWipe(strip, Color(0, 0, 0))
-        elif (MyData[0] = "S"):
+        elif (MyData[0] == "S"):
                 tmp = MyData[1:].split("/")
                 tmp2 = tmp[0].split('_')
-                Names[tmp2[0]].set_pwm(int(tmp2[1]),0,int(tmp[1]))
+                Names[tmp2[0]].set_pwm(int(tmp2[1]),0,int(float(tmp[1])))
         reply = data
         if not data:
             break
