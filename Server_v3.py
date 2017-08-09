@@ -40,8 +40,8 @@ PORT = 8888 # Arbitrary non-privileged port
 ser = ''
 
 LED_COUNT      = 16      # Number of LED pixels.
-LED_PIN        = 22      # GPIO pin connected to the pixels (18 uses PWM!).
-#LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
+#LED_PIN        = 22      # GPIO pin connected to the pixels (18 uses PWM!).
+LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
 LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
@@ -63,7 +63,10 @@ def moove_to(new_pos):
 
 strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
 # Intialize the library (must be called once before other functions).
-strip.begin()
+try:
+        strip.begin()
+except:
+        INIT_STATUS.append("NO")
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print('Socket created')
@@ -91,7 +94,7 @@ print('Socket bind complete')
 s.listen(10)
 print ('Socket now listening')
 
-print("Status of connection: \n PWM (0x40) - {}\n PWM (0x41) - {}\n PWM (0x42) - {}\n  Serial - {}\n".format(INIT_STATUS[0],INIT_STATUS[1],INIT_STATUS[2],INIT_STATUS[3]))
+print("Status of connection: \n PWM (0x40) - {}\n PWM (0x41) - {}\n PWM (0x42) - {}\n LEDs - {} \n Serial - {}\n".format(INIT_STATUS[0],INIT_STATUS[1],INIT_STATUS[2],INIT_STATUS[3],INIT_STATUS[4]))
 
 
 # Function for handling connections. This will be used to create threads
