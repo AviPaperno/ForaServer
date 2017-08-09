@@ -65,7 +65,7 @@ strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, 
 # Intialize the library (must be called once before other functions).
 try:
         strip.begin()
-        INIT_STATUS.appen("YES")
+        INIT_STATUS.append("YES")
 except:
         INIT_STATUS.append("NO")
 
