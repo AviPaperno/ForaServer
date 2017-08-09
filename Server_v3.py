@@ -78,7 +78,7 @@ print('Socket bind complete')
 s.listen(10)
 print ('Socket now listening')
 
-print("Status of connection: \n PWM - {}\n Serial - {}\n".format(INIT_STATUS[0],INIT_STATUS[1])
+print("Status of connection: \n PWM - {}\n Serial - {}\n".format(INIT_STATUS[0],INIT_STATUS[1]))
 
 
 # Function for handling connections. This will be used to create threads
@@ -113,6 +113,8 @@ def clientthread(conn):
         elif (MyData=="Ровное"):
             ser.write('0n'.encode('utf-8'))
             colorWipe(strip, Color(0, 0, 0))
+        elif (MyData=="Смущение"):
+            ser.write('2n'.encode('utf-8'))
         elif (MyData[0] == "S"):
                 tmp = MyData[1:].split("/")
                 tmp2 = tmp[0].split('_')
