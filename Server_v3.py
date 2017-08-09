@@ -8,14 +8,28 @@ import Adafruit_PCA9685
 
 INIT_STATUS = []
 
+Names = {}
+
 try:
         pwm_head = Adafruit_PCA9685.PCA9685(address=0x40)
-        pwm_left_arm = Adafruit_PCA9685.PCA9685(address=0x41)
-        pwm_right_arm = Adafruit_PCA9685.PCA9685(address=0x42)
         pwm_head.set_pwm_freq(60)
+        Names['head'] = pwm_head
+        INIT_STATUS.append("YES")
+except:
+        INIT_STATUS.append("NO")
+
+try:
+        pwm_left_arm = Adafruit_PCA9685.PCA9685(address=0x41)
         pwm_left_arm.set_pwm_freq(60)
+        Names['left'] = pwm_left_arm
+        INIT_STATUS.append("YES")
+except:
+        INIT_STATUS.append("NO")
+
+try:
+        pwm_right_arm = Adafruit_PCA9685.PCA9685(address=0x42)
         pwm_right_arm.set_pwm_freq(60)
-        Names = {'head' : pwm_head, 'left' : pwm_left_arm, 'right' : pwm_right_arm}
+        Names['right'] = pwm_right_arm
         INIT_STATUS.append("YES")
 except:
         INIT_STATUS.append("NO")
@@ -26,7 +40,7 @@ PORT = 8888 # Arbitrary non-privileged port
 ser = ''
 
 LED_COUNT      = 16      # Number of LED pixels.
-LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
+LED_PIN        = 22      # GPIO pin connected to the pixels (18 uses PWM!).
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
@@ -77,7 +91,7 @@ print('Socket bind complete')
 s.listen(10)
 print ('Socket now listening')
 
-print("Status of connection: \n PWM - {}\n Serial - {}\n".format(INIT_STATUS[0],INIT_STATUS[1]))
+print("Status of connection: \n PWM (0x40) - {}\n PWM (0x41) - {}\n PWM (0x42) - {}\n  Serial - {}\n".format(INIT_STATUS[0],INIT_STATUS[1],INIT_STATUS[2],INIT_STATUS[3]))
 
 
 # Function for handling connections. This will be used to create threads
