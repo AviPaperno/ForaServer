@@ -15,7 +15,6 @@ try:
         pwm_head.set_pwm_freq(60)
         pwm_left_arm.set_pwm_freq(60)
         pwm_right_arm.set_pwm_freq(60)
-
         Names = {'head' : pwm_head, 'left' : pwm_left_arm, 'right' : pwm_right_arm}
         INIT_STATUS.append("YES")
 except:
@@ -99,16 +98,12 @@ def clientthread(conn):
         elif (MyData[0] == "V"):
             s = MyData[1:]+"v"
             ser.write(s.encode('utf-8'))
-        elif (MyData[0] == "B"):
-            # Брови
-            moove_to(int(MyData[1:]))
         elif (MyData[0]=="M"):
             pwm.set_pwm(2,0,int(MyData[1:]))
         elif (MyData=="Радость"):
             ser.write('1n'.encode('utf-8'))
             colorWipe(strip, Color(255, 0, 0))
         elif (MyData=="Грусть"):
-            print("OK")
             colorWipe(strip, Color(0, 255, 0))
         elif (MyData=="Ровное"):
             ser.write('0n'.encode('utf-8'))
@@ -120,7 +115,10 @@ def clientthread(conn):
                 tmp2 = tmp[0].split('_')
                 if (len(tmp) == 2):
                         print("tmp: {}\ntmp2: {}".format(tmp,tmp2))
-                        Names[tmp2[0]].set_pwm(int(tmp2[1]),0,int(float(tmp[1])))
+                        try:
+                                Names[tmp2[0]].set_pwm(int(tmp2[1]),0,int(float(tmp[1])))
+                        except Exception as e:
+                                print(e)
         reply = data
         if not data:
             break
