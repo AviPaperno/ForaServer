@@ -6,23 +6,42 @@ import time
 import serial
 import Adafruit_PCA9685
 
-pwm_head = Adafruit_PCA9685.PCA9685(address=0x40)
-pwm_left_arm = Adafruit_PCA9685.PCA9685(address=0x41)
-#pwm_right_arm = Adafruit_PCA9685.PCA9685(address=0x42)
-pwm_head.set_pwm_freq(60)
-pwm_left_arm.set_pwm_freq(60)
-#pwm_right_arm.set_pwm_freq(60)
+INIT_STATUS = []
 
-Names = {'head' : pwm_head, 'left' : pwm_left_arm}
+Names = {}
+
+try:
+        pwm_head = Adafruit_PCA9685.PCA9685(address=0x40)
+        pwm_head.set_pwm_freq(60)
+        Names['head'] = pwm_head
+        INIT_STATUS.append("YES")
+except:
+        INIT_STATUS.append("NO")
+
+try:
+        pwm_left_arm = Adafruit_PCA9685.PCA9685(address=0x41)
+        pwm_left_arm.set_pwm_freq(60)
+        Names['left'] = pwm_left_arm
+        INIT_STATUS.append("YES")
+except:
+        INIT_STATUS.append("NO")
+
+try:
+        pwm_right_arm = Adafruit_PCA9685.PCA9685(address=0x42)
+        pwm_right_arm.set_pwm_freq(60)
+        Names['right'] = pwm_right_arm
+        INIT_STATUS.append("YES")
+except:
+        INIT_STATUS.append("NO")
 
 HOST = ''  # Symbolic name meaning all available interfaces
 PORT = 8888 # Arbitrary non-privileged port
 
 ser = ''
 
-LED_COUNT      = 8      # Number of LED pixels.
-LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
-#LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
+LED_COUNT      = 16      # Number of LED pixels.
+#LED_PIN        = 22      # GPIO pin connected to the pixels (18 uses PWM!).
+LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
 LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
@@ -44,7 +63,11 @@ def moove_to(new_pos):
 
 strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
 # Intialize the library (must be called once before other functions).
-strip.begin()
+try:
+        strip.begin()
+        INIT_STATUS.append("YES")
+except:
+        INIT_STATUS.append("NO")
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print('Socket created')
@@ -54,8 +77,9 @@ try:
     ser.port = '/dev/ttyACM0'
     ser.baudrate = 115200
     ser.open()
+    INIT_STATUS.append("YES")
 except:
-    pass
+    INIT_STATUS.append("NO")
 
 # Bind socket to local host and port
 try:
@@ -64,11 +88,14 @@ except socket.error as msg:
     print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
     sys.exit()
 
+
 print('Socket bind complete')
 
 # Start listening on socket
 s.listen(10)
 print ('Socket now listening')
+
+print("Status of connection: \n PWM (0x40) - {}\n PWM (0x41) - {}\n PWM (0x42) - {}\n LEDs - {} \n Serial - {}\n".format(INIT_STATUS[0],INIT_STATUS[1],INIT_STATUS[2],INIT_STATUS[3],INIT_STATUS[4]))
 
 
 # Function for handling connections. This will be used to create threads
@@ -89,26 +116,27 @@ def clientthread(conn):
         elif (MyData[0] == "V"):
             s = MyData[1:]+"v"
             ser.write(s.encode('utf-8'))
-        elif (MyData[0] == "B"):
-            # Брови
-            moove_to(int(MyData[1:]))
         elif (MyData[0]=="M"):
             pwm.set_pwm(2,0,int(MyData[1:]))
         elif (MyData=="Радость"):
-            print("OK")
+            ser.write('1n'.encode('utf-8'))
             colorWipe(strip, Color(255, 0, 0))
         elif (MyData=="Грусть"):
-            print("OK")
             colorWipe(strip, Color(0, 255, 0))
         elif (MyData=="Ровное"):
-            print("OK")
+            ser.write('0n'.encode('utf-8'))
             colorWipe(strip, Color(0, 0, 0))
+        elif (MyData=="Смущение"):
+            ser.write('2n'.encode('utf-8'))
         elif (MyData[0] == "S"):
                 tmp = MyData[1:].split("/")
                 tmp2 = tmp[0].split('_')
                 if (len(tmp) == 2):
                         print("tmp: {}\ntmp2: {}".format(tmp,tmp2))
-                        Names[tmp2[0]].set_pwm(int(tmp2[1]),0,int(float(tmp[1])))
+                        try:
+                                Names[tmp2[0]].set_pwm(int(tmp2[1]),0,int(float(tmp[1])))
+                        except Exception as e:
+                                print(e)
         reply = data
         if not data:
             break
