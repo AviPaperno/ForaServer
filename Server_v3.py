@@ -115,7 +115,7 @@ def clientthread(conn):
         elif (MyData[0] == "V"):
             s = MyData[1:]+"v"
             ser.write(s.encode('utf-8'))
-        elif (MyData=="n"):
+        elif (MyData[0] == "n"):
             ser.write('n'.encode('utf-8'))
         elif (MyData[0] == "S"):
                 tmp = MyData[1:].split("/")
