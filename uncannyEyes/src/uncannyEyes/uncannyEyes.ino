@@ -44,8 +44,8 @@ typedef Adafruit_SSD1351 displayType; // Using OLED display(s)
 
 #define DISPLAY_DC      9 // Data/command pin for BOTH displays
 #define DISPLAY_RESET   8 // Reset pin for BOTH displays
-#define SELECT_L_PIN    7 // LEFT eye chip select pin
-#define SELECT_R_PIN   10 // RIGHT eye chip select pin
+#define SELECT_L_PIN    10 // LEFT eye chip select pin
+#define SELECT_R_PIN   7 // RIGHT eye chip select pin
 
 // INPUT CONFIG (for eye motion -- enable or comment out as needed) --------
 
@@ -62,7 +62,7 @@ typedef Adafruit_SSD1351 displayType; // Using OLED display(s)
 #define WINK_L_PIN      0 // Pin for LEFT eye wink button
 #define BLINK_PIN       1 // Pin for blink button (BOTH eyes)
 #define WINK_R_PIN      2 // Pin for RIGHT eye wink button
-#define AUTOBLINK         // If enabled, eyes blink autonomously
+//#define AUTOBLINK         // If enabled, eyes blink autonomously
 
 // Probably don't need to edit any config below this line, -----------------
 // unless building a single-eye project (pendant, etc.), in which case one
@@ -133,6 +133,9 @@ const  int8_t pattern[14][18] = {
 uint8_t Select = 0;
 uint8_t Select_Heart = 0;
 uint8_t Count = 0;
+uint8_t Left_Eye_Wink = 1;
+uint8_t Right_Eye_Wink = 1;
+uint8_t Autoblink = 0;
 //-------------------------------------------------------------------------
 // Convert to RGB565
 // The function removes the lower 3 bits from Red and Blue, and the lower 2 bits from Green and applies the Intensity value.
@@ -399,10 +402,9 @@ const uint8_t ease[] = { }; // n
 int16_t tmpx = 512;
 int16_t tmpy = 512;
 String inString = "";
+uint32_t timeOfLastBlink =0L;
+uint32_t timeToNextBlink =0L;//= 0L;
 
-#ifdef AUTOBLINK
-uint32_t timeOfLastBlink = 0L, timeToNextBlink = 0L;
-#endif
 
 void frame( // Process motion for a single frame of left or right eye
   uint16_t        iScale) {     // Iris scale (0-1023) passed in
@@ -465,6 +467,25 @@ void frame( // Process motion for a single frame of left or right eye
               eye[0].display.fillScreen(ST7735_BLACK);
         eye[1].display.fillScreen(ST7735_BLACK);}
     }
+
+    else if (inChar == 'l')
+    {
+      Left_Eye_Wink = 0;
+    }
+
+    else if (inChar == 'r')
+
+    {
+     Right_Eye_Wink = 0;
+     }
+
+    else if (inChar = 'b')
+    {
+      if (Autoblink == 1) Autoblink = 0;
+      else Autoblink = 1;
+    }
+    
+    
     }
 
 
@@ -529,7 +550,8 @@ else { // Autonomous X/Y eye motion
 
   // Blinking
 
-#ifdef AUTOBLINK
+if (Autoblink == 0)
+{
   // Similar to the autonomous eye movement above -- blink start times
   // and durations are random (within ranges).
   if((t - timeOfLastBlink) >= timeToNextBlink) { // Start new blink?
@@ -545,7 +567,7 @@ else { // Autonomous X/Y eye motion
     }
     timeToNextBlink = blinkDuration * 3 + random(4000000);
   }
-#endif
+}
 
   if(eye[eyeIndex].blink.state) { // Eye currently blinking?
     // Check if current blink state time has elapsed
@@ -575,10 +597,21 @@ else { // Autonomous X/Y eye motion
           eye[e].blink.duration  = blinkDuration;
         }
       }
-    } else if(digitalRead(eye[eyeIndex].blink.pin) == LOW) { // Wink!
-      eye[eyeIndex].blink.state     = ENBLINK;
-      eye[eyeIndex].blink.startTime = t;
-      eye[eyeIndex].blink.duration  = random(45000, 90000);
+    } //else if(digitalRead(eye[eyeIndex].blink.pin) == LOW) { // Wink!
+      else if(Left_Eye_Wink == 0)
+      {
+      eye[0].blink.state     = ENBLINK;
+      eye[0].blink.startTime = t;
+      eye[0].blink.duration  = random(45000, 90000);
+      Left_Eye_Wink = 1;
+    }
+
+    else if (Right_Eye_Wink == 0)
+      {
+      eye[1].blink.state     = ENBLINK;
+      eye[1].blink.startTime = t;
+      eye[1].blink.duration  = random(45000, 90000);
+      Right_Eye_Wink = 1;
     }
   }
 
