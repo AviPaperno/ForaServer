@@ -187,7 +187,7 @@ def clientthread(conn):
                 if (len(tmp) == 2):
                         print("tmp: {}\ntmp2: {}".format(tmp,tmp2))
                         try:
-                                Names[tmp2[0]].set_pwm(int(tmp2[1]),0,int(float(tmp[1])))
+                                Names[tmp2[0]].setServo(int(tmp2[1]),int(float(tmp[1])))
                         except Exception as e:
                                 print(e)
         elif (MyData[0] == 'C'): ## Управление цветом.
