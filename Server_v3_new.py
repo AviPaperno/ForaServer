@@ -18,7 +18,7 @@ Names = {} ## PCA модули по именам
 
 S = namedtuple('S',['servo_name','pos'])
 
-INIT = [S(servo_name='head_1', pos=-375), S(servo_name='head_2', pos=-450), S(servo_name='head_3', pos=415), S(servo_name='head_4', pos=-440), S(servo_name='head_5', pos=320), S(servo_name='left_2', pos=-540), S(servo_name='right_2', pos=250), S(servo_name='left_3', pos=220), S(servo_name='right_3', pos=-550), S(servo_name='left_4', pos=400), S(servo_name='right_4', pos=360)]
+INIT = [S(servo_name='head_1', pos=36), S(servo_name='head_2', pos=47), S(servo_name='head_3', pos=42), S(servo_name='head_4', pos=45), S(servo_name='head_5', pos=27), S(servo_name='left_2', pos=55), S(servo_name='right_2', pos=20), S(servo_name='left_3', pos=15), S(servo_name='right_3', pos=60), S(servo_name='left_4', pos=35), S(servo_name='right_4', pos=30)]
 
 
 ## Следующий блок кода отвечает за подключение PCA.
@@ -95,12 +95,12 @@ def activate():
                 Names['left'].servos[4].set(signed=False, reverse=False, minv=200, maxv=600, trim=0, exp=0)
                 Names['right'].servos[4].set(signed=False, reverse=False, minv=200, maxv=570, trim=0, exp=0)
 
- #               for i in range(1,6):
- #                       Names['head'].setServo(i,find_pos('head',i))
- #               for i in range(2,4):
- #                       Names['left'].setServo(i,find_pos('left',i))
- #               for i in range(2,4):
- #                       Names['right'].setServo(i,find_pos('left',i))
+                for i in range(1,6):
+                        Names['head'].setServo(i,find_pos('head',i))
+                for i in range(2,5):
+                        Names['left'].setServo(i,find_pos('left',i))
+                for i in range(2,5):
+                        Names['right'].setServo(i,find_pos('left',i))
         except:
                 pass
         print('Initialisation end...')
@@ -153,7 +153,6 @@ print ('Socket now listening')
 ## Выводим статус подключения
 print("Status of connection: \n PWM (0x40) - {}\n PWM (0x41) - {}\n PWM (0x42) - {}\n LEDs - {} \n Serial - {}\n".format(*INIT_STATUS))
 
-activate()
 
 # Function for handling connections. This will be used to create threads
 def clientthread(conn):
@@ -183,6 +182,8 @@ def clientthread(conn):
             ser.write('l'.encode('utf-8'))
         elif (MyData[0] == "r"):
             ser.write('r'.encode('utf-8'))
+        elif (MyData[0] == 'A'):
+            activate()
         elif (MyData[0] == "S"): ## Управление сервоприводами
                 tmp = MyData[1:].split("/")
                 tmp2 = tmp[0].split('_')
