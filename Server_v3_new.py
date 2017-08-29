@@ -19,7 +19,7 @@ Names = {} ## PCA модули по именам
 S = namedtuple('S',['servo_name','pos'])
 
 INIT = [S(servo_name='head_1', pos=36), S(servo_name='head_2', pos=47), S(servo_name='head_3', pos=42), S(servo_name='head_4', pos=45), S(servo_name='head_5', pos=27), S(servo_name='left_2', pos=55), S(servo_name='right_2', pos=20), S(servo_name='left_3', pos=15), S(servo_name='right_3', pos=60), S(servo_name='left_4', pos=35), S(servo_name='right_4', pos=30)]
-
+ARR = [S(servo_name='head_5', pos=39), S(servo_name='head_4', pos=31), S(servo_name='right_2', pos=24), S(servo_name='right_3', pos=28), S(servo_name='right_4', pos=40), S(servo_name='left_2', pos=42), S(servo_name='left_3', pos=53), S(servo_name='left_4', pos=21)]
 
 ## Следующий блок кода отвечает за подключение PCA.
 
@@ -69,44 +69,42 @@ except:
 
 
 def colorWipe(strip, color, wait_ms=50):
-	''' Функция одновременно включает все светодиоды заданного цвета '''
-	for i in range(strip.numPixels()):
-		strip.setPixelColor(i, color)
-	strip.show()
+        ''' Функция одновременно включает все светодиоды заданного цвета '''
+        for i in range(strip.numPixels()):
+                strip.setPixelColor(i, color)
+        strip.show()
 
-def find_pos(name,servo_num):
+def find_pos(name,servo_num, arr = INIT):
         tmp = name+'_'+str(servo_num)
-        for i in INIT:
+        for i in arr:
                 if (i.servo_name==tmp):
                         return i.pos
 
 def activate():
         print('Initialisation begin...')
         try:
-                Names['head'].servos[1].set(signed=False, reverse=False, minv=190, maxv=560, trim=0, exp=0)
-                Names['head'].servos[2].set(signed=False, reverse=False, minv=300, maxv=520, trim=0, exp=0)
-                Names['head'].servos[3].set(signed=False, reverse=False, minv=415, maxv=480, trim=0, exp=0)
-                Names['head'].servos[4].set(signed=False, reverse=False, minv=200, maxv=550, trim=0, exp=0)
-                Names['head'].servos[5].set(signed=False, reverse=False, minv=240, maxv=570, trim=0, exp=0)
-                Names['left'].servos[2].set(signed=False, reverse=False, minv=220, maxv=540, trim=0, exp=0)
-                Names['left'].servos[3].set(signed=False, reverse=False, minv=220, maxv=600, trim=0, exp=0)
-                Names['right'].servos[2].set(signed=False, reverse=False, minv=250, maxv=500, trim=0, exp=0)
-                Names['right'].servos[3].set(signed=False, reverse=False, minv=160, maxv=550, trim=0, exp=0)
-                Names['left'].servos[4].set(signed=False, reverse=False, minv=200, maxv=600, trim=0, exp=0)
-                Names['right'].servos[4].set(signed=False, reverse=False, minv=200, maxv=570, trim=0, exp=0)
-
                 for i in range(1,6):
                         Names['head'].setServo(i,find_pos('head',i))
                 for i in range(2,5):
                         Names['left'].setServo(i,find_pos('left',i))
                 for i in range(2,5):
-                        Names['right'].setServo(i,find_pos('left',i))
+                        Names['right'].setServo(i,find_pos('right',i))
         except:
                 pass
         print('Initialisation end...')
 ## Пытаемся проинициалировать сервоприводы
         
-
+def love():
+        try:
+                for i in range(4,6):
+                        Names['head'].setServo(i,find_pos('head',i,ARR))
+                for i in range(2,5):
+                        Names['left'].setServo(i,find_pos('left',i,ARR))
+                for i in range(2,5):
+                        Names['right'].setServo(i,find_pos('right',i,ARR))
+        except:
+                pass
+        
 
 ## Создаём и проверяем подключение светодиодов
 try:
@@ -184,6 +182,8 @@ def clientthread(conn):
             ser.write('r'.encode('utf-8'))
         elif (MyData[0] == 'A'):
             activate()
+        elif (MyData[0] == 'L'):
+            love()
         elif (MyData[0] == "S"): ## Управление сервоприводами
                 tmp = MyData[1:].split("/")
                 tmp2 = tmp[0].split('_')
