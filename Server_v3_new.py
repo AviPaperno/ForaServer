@@ -83,22 +83,24 @@ def find_pos(name,servo_num):
 def activate():
         print('Initialisation begin...')
         try:
-                Names['head'].servos[1].set(signed=False, reverse=False, min=100, max=100, trim=0, exp=0)
-                Names['head'].servos[2].set(signed=False, reverse=False, min=100, max=100, trim=0, exp=0)
-                Names['head'].servos[3].set(signed=False, reverse=False, min=100, max=100, trim=0, exp=0)
-                Names['head'].servos[4].set(signed=False, reverse=False, min=100, max=100, trim=0, exp=0)
-                Names['head'].servos[5].set(signed=False, reverse=False, min=100, max=100, trim=0, exp=0)
-                Names['left'].servos[2].set(signed=False, reverse=False, min=100, max=100, trim=0, exp=0)
-                Names['left'].servos[3].set(signed=False, reverse=False, min=100, max=100, trim=0, exp=0)
-                Names['right'].servos[2].set(signed=False, reverse=False, min=100, max=100, trim=0, exp=0)
-                Names['right'].servos[3].set(signed=False, reverse=False, min=100, max=100, trim=0, exp=0)
+                Names['head'].servos[1].set(signed=False, reverse=False, minv=190, maxv=560, trim=0, exp=0)
+                Names['head'].servos[2].set(signed=False, reverse=False, minv=300, maxv=520, trim=0, exp=0)
+                Names['head'].servos[3].set(signed=False, reverse=False, minv=415, maxv=480, trim=0, exp=0)
+                Names['head'].servos[4].set(signed=False, reverse=False, minv=200, maxv=550, trim=0, exp=0)
+                Names['head'].servos[5].set(signed=False, reverse=False, minv=240, maxv=570, trim=0, exp=0)
+                Names['left'].servos[2].set(signed=False, reverse=False, minv=220, maxv=540, trim=0, exp=0)
+                Names['left'].servos[3].set(signed=False, reverse=False, minv=220, maxv=600, trim=0, exp=0)
+                Names['right'].servos[2].set(signed=False, reverse=False, minv=250, maxv=500, trim=0, exp=0)
+                Names['right'].servos[3].set(signed=False, reverse=False, minv=160, maxv=550, trim=0, exp=0)
+                Names['left'].servos[4].set(signed=False, reverse=False, minv=200, maxv=600, trim=0, exp=0)
+                Names['right'].servos[4].set(signed=False, reverse=False, minv=200, maxv=570, trim=0, exp=0)
 
-                for i in range(1,6):
-                        Names['head'].setServo(i,find_pos('head',i))
-                for i in range(2,4):
-                        Names['left'].setServo(i,find_pos('left',i))
-                for i in range(2,4):
-                        Names['right'].setServo(i,find_pos('left',i))
+ #               for i in range(1,6):
+ #                       Names['head'].setServo(i,find_pos('head',i))
+ #               for i in range(2,4):
+ #                       Names['left'].setServo(i,find_pos('left',i))
+ #               for i in range(2,4):
+ #                       Names['right'].setServo(i,find_pos('left',i))
         except:
                 pass
         print('Initialisation end...')
