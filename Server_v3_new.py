@@ -95,6 +95,7 @@ def activate():
 ## Пытаемся проинициалировать сервоприводы
         
 def love():
+        print('Love position begin')
         try:
                 for i in range(4,6):
                         Names['head'].setServo(i,find_pos('head',i,ARR))
@@ -103,7 +104,9 @@ def love():
                 for i in range(2,5):
                         Names['right'].setServo(i,find_pos('right',i,ARR))
         except:
-                pass
+                print('Oшибка: ', sys.exc_info()[0])
+        print('Love position end')
+
         
 
 ## Создаём и проверяем подключение светодиодов

@@ -33,7 +33,7 @@ except:
         INIT_STATUS.append("NO")
 
 HOST = ''  # Symbolic name meaning all available interfaces
-PORT = 2222 # Arbitrary non-privileged port
+PORT = 8888 # Arbitrary non-privileged port
 
 ser = ''
 
