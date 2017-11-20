@@ -1,5 +1,6 @@
 try:
         import socket
+        import os
         import sys
         from _thread import *
         from neopixel import *
@@ -7,6 +8,8 @@ try:
         import serial
         from pca9685 import *
         from multiprocessing import Process
+        import picamera
+        import subprocess
 except:
         pass
 
@@ -66,19 +69,32 @@ try:
         LED_STRIP      = ws.WS2811_STRIP_GRB   # Strip type and colour ordering
 except:
         pass
+## Подключаем камеру
+try:
+        camera = picamera.PiCamera()
+except:
+        pass
 
+def move(servos,positions,pause):
+        global Names
+        for i in range(len(servos)):
+                tmp = servos[i].split('_')
+                try:
+                        Names[tmp[0]].setServo(int(tmp[1]),int(float(position[i])))
+                except Exception as e:
+                        print(e)
+                time.sleep(pause)
 
-def colorWipe(strip, color, wait_ms=50):
-        ''' Функция одновременно включает все светодиоды заданного цвета '''
-        for i in range(strip.numPixels()):
-                strip.setPixelColor(i, color)
-        strip.show()
-
-def find_pos(name,servo_num, arr = INIT):
-        tmp = name+'_'+str(servo_num)
-        for i in arr:
-                if (i.servo_name==tmp):
-                        return i.pos
+def decoder(Temp_String):
+        Temp_String = Temp_String.replace('],',']/')
+        Servos,Pos,Time =Temp_String.split('(')[1].split(')')[0].split('/')
+        Time = float(Time)
+        Pos = eval(Pos.replace('-',''))
+        Servos = Servos[:-1]+"']"
+        Servos = Servos.replace('self.ids.',"'")
+        Servos = Servos.replace(',',"',")
+        Servos = eval(Servos)
+        return Servos,Pos,Time
 
 def activate():
         print('Initialisation begin...')
@@ -92,7 +108,42 @@ def activate():
         except:
                 pass
         print('Initialisation end...')
+
+def run_script(FileName):
+        try:
+                input_file = open(FileName)
+        except:
+                return
+        for line in input_file:
+                if 'moove' in line:
+                        move(decoder(line))
+                elif 'sleep' in line:
+                        eval(line)
+                elif 'init' in line:
+                        activate()
+                        
+                
+                
+
+def colorWipe(strip, color, wait_ms=50):
+        ''' Функция одновременно включает все светодиоды заданного цвета '''
+        for i in range(strip.numPixels()):
+                strip.setPixelColor(i, color)
+        strip.show()
+
+def find_pos(name,servo_num, arr = INIT):
+        tmp = name+'_'+str(servo_num)
+        for i in arr:
+                if (i.servo_name==tmp):
+                        return i.pos
+
 ## Пытаемся проинициалировать сервоприводы
+
+def play_music(file_name):
+        try:
+                player = subprocess.Popen(["omxplayer", ADDRESS+name+".mp3"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except:
+                pass
         
 def love():
         print('Love position begin')
@@ -199,8 +250,14 @@ def clientthread(conn):
         elif (MyData[0] == 'C'): ## Управление цветом.
                 s = MyData[1:].split('_')
                 colorWipe(strip,Color(int(float(s[0])),int(float(s[1])),int(float(s[2]))))
-                
-                
+        elif (MyData[0] == 'M'):
+                file = MyData[1:]
+                play_music(file)
+        elif (MyData == 'RUN'):
+                run_script("/Script/1.rc")
+                play_music("/Audio/1.mp3")
+        elif (MyData =='photo'):
+                camera.capture('/photo/image.jpg')
         reply = data
         if not data:
             break
