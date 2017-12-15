@@ -132,6 +132,12 @@ def activate():
                 CURR[i.servo_name] = i.pos
         print('Initialisation end...')
 
+def change_eye(line):
+        global ser
+        if 'love' or 'normal' in line:
+                ser.write('h'.encode('utf-8'))
+
+
 def run_script(FileName):
         try:
                 input_file = open(FileName)
@@ -144,6 +150,8 @@ def run_script(FileName):
                         eval(line)
                 elif 'init' in line:
                         activate()
+                elif 'eye' in line:
+                        change_eye(line)
                         
                 
                 
@@ -166,7 +174,7 @@ def play_music(file_name):
         try:
                 player = subprocess.Popen(["omxplayer", ADDRESS+name+".mp3"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except:
-                pass
+                print("Somth wrong")
         
 def love():
         print('Love position begin')
