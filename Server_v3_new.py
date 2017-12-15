@@ -122,11 +122,11 @@ def Slow_activate():
         print('Initialisation begin...')
         try:
                 for i in range(1,6):
-                        slow_moove('head',str(i),find_pos('head',i))
+                        slow_moove('head',str(i),find_pos('head',i),0.05)
                 for i in range(2,5):
-                        slow_moove('left',str(i),find_pos('left',i))
+                        slow_moove('left',str(i),find_pos('left',i),0.05)
                 for i in range(2,5):
-                        slow_moove('right',str(i),find_pos('right',i))
+                        slow_moove('right',str(i),find_pos('right',i),0.05)
         except:
                 pass
         for i in INIT:

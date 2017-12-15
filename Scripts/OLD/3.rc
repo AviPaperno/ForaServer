@@ -1,6 +1,0 @@
-Workers.clear()
-Workers.append(threading.Thread(target = self.send_dervo_pos, args = (42,'head_5')))
-Workers.append(threading.Thread(target = self.send_dervo_pos, args = (20,'right_2')))
-Workers.append(threading.Thread(target = self.send_dervo_pos, args = (10,'right_3')))
-Workers.append(threading.Thread(target = self.send_dervo_pos, args = (65,'right_4')))
-self.run()
