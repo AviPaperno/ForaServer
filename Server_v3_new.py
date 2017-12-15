@@ -10,6 +10,7 @@ try:
         from multiprocessing import Process
         import picamera
         import subprocess
+        from gtts import gTTS
 except:
         pass
 
@@ -176,7 +177,7 @@ def find_pos(name,servo_num, arr = INIT):
 
 def play_music(file_name):
         try:
-                player = subprocess.Popen(["omxplayer", ADDRESS+name+".mp3"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                player = subprocess.Popen(["omxplayer", file_name], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except:
                 print("Somth wrong")
         
@@ -295,6 +296,11 @@ def clientthread(conn):
                 run_script("Scripts/"+tmp+".rc")
         elif (MyData =='photo'):
                 camera.capture('/photo/image.jpg')
+        elif (MyData[0] = '@'):
+                data = MyData[1:].split('_')
+                tts=gTTS(text=data[0], lang=data[1])        
+                tts.save('say.mp3')
+                play_music('say.mp3')
         reply = data
         if not data:
             break
