@@ -122,6 +122,20 @@ def activate():
         print('Initialisation begin...')
         try:
                 for i in range(1,6):
+                        slow_moove('head',i,find_pos('head',i))
+                for i in range(2,5):
+                        slow_moove('left',i,find_pos('left',i))
+                for i in range(2,5):
+                        slow_moove('right',i,find_pos('right',i))
+        except:
+                pass
+        for i in INIT:
+                CURR[i.servo_name] = i.pos
+        print('Initialisation end...')
+
+def Slow_activate():
+        try:
+                for i in range(1,6):
                         Names['head'].setServo(i,find_pos('head',i))
                 for i in range(2,5):
                         Names['left'].setServo(i,find_pos('left',i))
@@ -131,7 +145,7 @@ def activate():
                 pass
         for i in INIT:
                 CURR[i.servo_name] = i.pos
-        print('Initialisation end...')
+        
 
 def change_eye(line):
         global ser
@@ -154,7 +168,7 @@ def run_script(FileName):
                 elif 'sleep' in line:
                         eval(line)
                 elif 'init' in line:
-                        activate()
+                        Slow_activate()
                 elif 'eye' in line:
                         change_eye(line)
                         
@@ -296,9 +310,9 @@ def clientthread(conn):
                 run_script("Scripts/"+tmp+".rc")
         elif (MyData =='photo'):
                 camera.capture('/photo/image.jpg')
-        elif (MyData[0] = '@'):
-                data = MyData[1:].split('_')
-                tts=gTTS(text=data[0], lang=data[1])        
+        elif (MyData[0] == '@'):
+                data1 = MyData[1:].split('_')
+                tts=gTTS(text=data1[0], lang=data1[1])        
                 tts.save('say.mp3')
                 play_music('say.mp3')
         reply = data
