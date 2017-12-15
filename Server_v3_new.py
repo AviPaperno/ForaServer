@@ -136,6 +136,10 @@ def change_eye(line):
         global ser
         if 'love' or 'normal' in line:
                 ser.write('h'.encode('utf-8'))
+        else:
+                ser.write('n'.encode('utf-8'))
+                tmp = line.split('(')[1].split(')')[0]
+                ser.write(tmp.encode('utf-8'))
 
 
 def run_script(FileName):
@@ -284,7 +288,7 @@ def clientthread(conn):
                 colorWipe(strip,Color(int(float(s[0])),int(float(s[1])),int(float(s[2]))))
         elif (MyData[0] == 'M'):
                 file = MyData[1:]
-                print(printing_music)
+                print(file)
                 play_music(file)
         elif ('RUN' in MyData):
                 tmp = MyData[3]
