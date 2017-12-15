@@ -118,7 +118,7 @@ def decoder(Temp_String):
         Servos = eval(Servos)
         return Servos,Pos,Time
 
-def activate():
+def Slow_activate():
         print('Initialisation begin...')
         try:
                 for i in range(1,6):
@@ -133,7 +133,7 @@ def activate():
                 CURR[i.servo_name] = i.pos
         print('Initialisation end...')
 
-def Slow_activate():
+def activate():
         try:
                 for i in range(1,6):
                         Names['head'].setServo(i,find_pos('head',i))
