@@ -101,7 +101,7 @@ def move(data):
                 tmp = servos[i].split('_')
                 try:
                         ##Names[tmp[0]].setServo(int(tmp[1]),int(float(position[i])))
-                        slow_moove(tmp[0],int(tmp[1]),position[i], pause)
+                        slow_moove(tmp[0],tmp[1],position[i], pause)
                 except Exception as e:
                         print(e)
 
