@@ -84,18 +84,18 @@ def slow_moove(servo_name,servo_id,position,pause = 0.5):
         global CURR
         curr_pos = CURR[servo_name+'_'+servo_id]
         if (position > curr_pos):
-                while (position > cuur_pos):
+                while (position > curr_pos):
                         Names[servo_name].setServo(servo_id,curr_pos+1)
                         CURR[servo_name+'_'+servo_id] += 1
                         time.sleep(pause)
         elif (position < curr_pos):
-                while (position < cuur_pos):
+                while (position < curr_pos):
                         Names[servo_name].setServo(servo_id,curr_pos-1)
                         CURR[servo_name+'_'+servo_id] -= 1
                         time.sleep(pause)                
 
 def move(data):
-        servos,positions, pause = data
+        servos,position, pause = data
         global Names
         for i in range(len(servos)):
                 tmp = servos[i].split('_')
@@ -276,8 +276,8 @@ def clientthread(conn):
                 file = MyData[1:]
                 play_music(file)
         elif (MyData == 'RUN'):
-                run_script("/Script/1.rc")
-                play_music("/Audio/1.mp3")
+                play_music("Audio/1.mp3")
+                run_script("Scripts/1.rc")
         elif (MyData =='photo'):
                 camera.capture('/photo/image.jpg')
         reply = data

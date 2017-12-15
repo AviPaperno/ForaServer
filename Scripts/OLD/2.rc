@@ -1,0 +1,6 @@
+self.show_status(status_of, '| Run script 2 |')
+print(tn)
+nl = Process(target = self.send_dervo_pos, args = (30,'left_2') )
+nr = Process(target = self.send_dervo_pos, args = (40,'right_2') )
+nl.start()
+nr.start()

@@ -1,0 +1,2 @@
+self.show_status(status_of, '| Run script 9 <Love> |')
+self.love()

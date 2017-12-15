@@ -1,0 +1,5 @@
+self.slider_moove([self.ids.left_3,self.ids.head_1,self.ids.head_2,self.ids.head_2,self.ids.head_2,self.ids.head_1,self.ids.left_3,],[45,45,-52,-49,-52,35,15,],0.05)
+self.to_init(self.ids.left_3,self.ids.head_1,self.ids.head_2)
+time.sleep(7)
+self.slider_moove([self.ids.head_2,self.ids.right_4,self.ids.right_3,self.ids.head_2,self.ids.head_2,self.ids.head_5,self.ids.head_2,self.ids.head_2,self.ids.head_2,self.ids.head_2,self.ids.right_3,self.ids.left_4,self.ids.left_4,self.ids.right_3,self.ids.left_4,self.ids.left_4,self.ids.right_3,self.ids.right_4,self.ids.left_4,self.ids.head_2],[-39,-65,-10,-49,-40,48,-48,-47,-54,-47,-54,10,32,-54,10,32,-21,-57,13,-51],0.05)
+self.to_init(self.ids.head_2,self.ids.right_4,self.ids.right_3,self.ids.head_5,self.ids.left_4)

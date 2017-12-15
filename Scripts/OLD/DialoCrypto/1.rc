@@ -1,0 +1,8 @@
+self.show_status(status_of, '| Run script 1 |')
+self.change_color_rgb([255,0,0],status_of)
+self.change_status_heart_nobtn(status_of)
+self.show_status(status_of, '| Pause 5 sec |')
+time.sleep(5)
+self.change_status_heart_nobtn(status_of)
+self.change_color_rgb([0,0,0],status_of)
+self.show_status(status_of, '| Script 1 finish.\n -------------------------------\n')
