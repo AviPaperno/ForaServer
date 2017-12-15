@@ -276,6 +276,7 @@ def clientthread(conn):
                 colorWipe(strip,Color(int(float(s[0])),int(float(s[1])),int(float(s[2]))))
         elif (MyData[0] == 'M'):
                 file = MyData[1:]
+                print(printing_music)
                 play_music(file)
         elif ('RUN' in MyData):
                 tmp = MyData[3]
