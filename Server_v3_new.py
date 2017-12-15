@@ -90,7 +90,7 @@ def slow_moove(servo_name,servo_id,position,pause = 0.5):
                         time.sleep(pause)
         elif (position < CURR[servo_name+'_'+servo_id]):
                 while (position < CURR[servo_name+'_'+servo_id]):
-                        Names[servo_name].setServo(servo_id,CURR[servo_name+'_'+servo_id]-1)
+                        Names[servo_name].setServo(int(servo_id),CURR[servo_name+'_'+servo_id]-1)
                         CURR[servo_name+'_'+servo_id] -= 1
                         time.sleep(pause)                
 
@@ -128,6 +128,8 @@ def activate():
                         Names['right'].setServo(i,find_pos('right',i))
         except:
                 pass
+        for i in INIT:
+                CURR[i.servo_name] = i.pos
         print('Initialisation end...')
 
 def run_script(FileName):
@@ -275,9 +277,9 @@ def clientthread(conn):
         elif (MyData[0] == 'M'):
                 file = MyData[1:]
                 play_music(file)
-        elif (MyData == 'RUN'):
-                play_music("Audio/1.mp3")
-                run_script("Scripts/1.rc")
+        elif ('RUN' in MyData):
+                tmp = MyData[3]
+                run_script("Scripts/"+tmp+".rc")
         elif (MyData =='photo'):
                 camera.capture('/photo/image.jpg')
         reply = data
