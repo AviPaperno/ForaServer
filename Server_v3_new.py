@@ -15,16 +15,16 @@ except:
 
 from collections import namedtuple
 
-INIT_STATUS = [] ## Статус подключения модулей
+INIT_STATUS = [] ## РЎС‚Р°С‚СѓСЃ РїРѕРґРєР»СЋС‡РµРЅРёСЏ РјРѕРґСѓР»РµР№
 
-Names = {} ## PCA модули по именам
+Names = {} ## PCA РјРѕРґСѓР»Рё РїРѕ РёРјРµРЅР°Рј
 
 S = namedtuple('S',['servo_name','pos'])
 
 INIT = [S(servo_name='head_1', pos=36), S(servo_name='head_2', pos=47), S(servo_name='head_3', pos=42), S(servo_name='head_4', pos=45), S(servo_name='head_5', pos=27), S(servo_name='left_2', pos=55), S(servo_name='right_2', pos=20), S(servo_name='left_3', pos=15), S(servo_name='right_3', pos=60), S(servo_name='left_4', pos=35), S(servo_name='right_4', pos=30)]
 ARR = [S(servo_name='head_5', pos=39), S(servo_name='head_4', pos=31), S(servo_name='right_2', pos=24), S(servo_name='right_3', pos=28), S(servo_name='right_4', pos=40), S(servo_name='left_2', pos=42), S(servo_name='left_3', pos=53), S(servo_name='left_4', pos=21)]
 
-## Следующий блок кода отвечает за подключение PCA.
+## РЎР»РµРґСѓСЋС‰РёР№ Р±Р»РѕРє РєРѕРґР° РѕС‚РІРµС‡Р°РµС‚ Р·Р° РїРѕРґРєР»СЋС‡РµРЅРёРµ PCA.
 
 CURR = {}
 
@@ -53,15 +53,15 @@ except:
         INIT_STATUS.append("NO")
 
 
-## Задаём хост, и порт. Пустые кавычки равносильны localhost
+## Р—Р°РґР°С‘Рј С…РѕСЃС‚, Рё РїРѕСЂС‚. РџСѓСЃС‚С‹Рµ РєР°РІС‹С‡РєРё СЂР°РІРЅРѕСЃРёР»СЊРЅС‹ localhost
 HOST = ''
 PORT = 8888
 
-## Задаём переменную Serial-порта. Для упарвления глазами
+## Р—Р°РґР°С‘Рј РїРµСЂРµРјРµРЅРЅСѓСЋ Serial-РїРѕСЂС‚Р°. Р”Р»СЏ СѓРїР°СЂРІР»РµРЅРёСЏ РіР»Р°Р·Р°РјРё
 ser = '' 
 
 try:
-## Задаём переменные, необходмые для управления подсветкой.
+## Р—Р°РґР°С‘Рј РїРµСЂРµРјРµРЅРЅС‹Рµ, РЅРµРѕР±С…РѕРґРјС‹Рµ РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ РїРѕРґСЃРІРµС‚РєРѕР№.
         LED_COUNT      = 16      # Number of LED pixels.
         #LED_PIN        = 22      # GPIO pin connected to the pixels (18 uses PWM!).
         LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
@@ -73,7 +73,7 @@ try:
         LED_STRIP      = ws.WS2811_STRIP_GRB   # Strip type and colour ordering
 except:
         pass
-## Подключаем камеру
+## РџРѕРґРєР»СЋС‡Р°РµРј РєР°РјРµСЂСѓ
 try:
         camera = picamera.PiCamera()
 except:
@@ -147,7 +147,7 @@ def run_script(FileName):
                 
 
 def colorWipe(strip, color, wait_ms=50):
-        ''' Функция одновременно включает все светодиоды заданного цвета '''
+        ''' Р¤СѓРЅРєС†РёСЏ РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ РІРєР»СЋС‡Р°РµС‚ РІСЃРµ СЃРІРµС‚РѕРґРёРѕРґС‹ Р·Р°РґР°РЅРЅРѕРіРѕ С†РІРµС‚Р° '''
         for i in range(strip.numPixels()):
                 strip.setPixelColor(i, color)
         strip.show()
@@ -158,7 +158,7 @@ def find_pos(name,servo_num, arr = INIT):
                 if (i.servo_name==tmp):
                         return i.pos
 
-## Пытаемся проинициалировать сервоприводы
+## РџС‹С‚Р°РµРјСЃСЏ РїСЂРѕРёРЅРёС†РёР°Р»РёСЂРѕРІР°С‚СЊ СЃРµСЂРІРѕРїСЂРёРІРѕРґС‹
 
 def play_music(file_name):
         try:
@@ -176,12 +176,12 @@ def love():
                 for i in range(2,5):
                         Names['right'].setServo(i,find_pos('right',i,ARR))
         except:
-                print('Oшибка: ', sys.exc_info()[0])
+                print('OС€РёР±РєР°: ', sys.exc_info()[0])
         print('Love position end')
 
         
 
-## Создаём и проверяем подключение светодиодов
+## РЎРѕР·РґР°С‘Рј Рё РїСЂРѕРІРµСЂСЏРµРј РїРѕРґРєР»СЋС‡РµРЅРёРµ СЃРІРµС‚РѕРґРёРѕРґРѕРІ
 try:
         strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
 except:
@@ -193,12 +193,12 @@ try:
 except:
         INIT_STATUS.append("NO")
 
-## Создаём сокет
+## РЎРѕР·РґР°С‘Рј СЃРѕРєРµС‚
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print('Socket created')
 
 
-## Пытаемся подключиться к Teensy, по Serial-порту
+## РџС‹С‚Р°РµРјСЃСЏ РїРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ Рє Teensy, РїРѕ Serial-РїРѕСЂС‚Сѓ
 try:
     ser = serial.Serial()
     ser.port = '/dev/ttyACM0'
@@ -209,7 +209,7 @@ except:
     INIT_STATUS.append("NO")
 
 
-## Запускаем обработчик сокетов
+## Р—Р°РїСѓСЃРєР°РµРј РѕР±СЂР°Р±РѕС‚С‡РёРє СЃРѕРєРµС‚РѕРІ
 try:
     s.bind((HOST, PORT))
 except socket.error as msg:
@@ -223,7 +223,7 @@ print('Socket bind complete')
 s.listen(10)
 print ('Socket now listening')
 
-## Выводим статус подключения
+## Р’С‹РІРѕРґРёРј СЃС‚Р°С‚СѓСЃ РїРѕРґРєР»СЋС‡РµРЅРёСЏ
 print("Status of connection: \n PWM (0x40) - {}\n PWM (0x41) - {}\n PWM (0x42) - {}\n LEDs - {} \n Serial - {}\n".format(*INIT_STATUS))
 
 
@@ -239,16 +239,16 @@ def clientthread(conn):
         data = conn.recv(1024)
         MyData = (data.decode("utf-8").strip())
 
-        if (MyData[0] == "E"): ##Движение глаз по горизонтали
+        if (MyData[0] == "E"): ##Р”РІРёР¶РµРЅРёРµ РіР»Р°Р· РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё
             s = MyData[1:]+"g"
             ser.write(s.encode('utf-8')) 
-        elif (MyData[0] == "V"): ##Движение глаз по вертикали
+        elif (MyData[0] == "V"): ##Р”РІРёР¶РµРЅРёРµ РіР»Р°Р· РїРѕ РІРµСЂС‚РёРєР°Р»Рё
             s = MyData[1:]+"v"
             ser.write(s.encode('utf-8'))
         elif (MyData[0] == "n"):
-            ser.write('n'.encode('utf-8')) ##Переключение между автоматическим движением и ручным управлением глаз
+            ser.write('n'.encode('utf-8')) ##РџРµСЂРµРєР»СЋС‡РµРЅРёРµ РјРµР¶РґСѓ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРёРј РґРІРёР¶РµРЅРёРµРј Рё СЂСѓС‡РЅС‹Рј СѓРїСЂР°РІР»РµРЅРёРµРј РіР»Р°Р·
         elif (MyData[0] == "h"):
-            ser.write('h'.encode('utf-8')) ##Переключение между глазами и картинокой с сердцем
+            ser.write('h'.encode('utf-8')) ##РџРµСЂРµРєР»СЋС‡РµРЅРёРµ РјРµР¶РґСѓ РіР»Р°Р·Р°РјРё Рё РєР°СЂС‚РёРЅРѕРєРѕР№ СЃ СЃРµСЂРґС†РµРј
         elif (MyData[0] == "b"):
             ser.write('b'.encode('utf-8'))
         elif (MyData[0] == "l"):
@@ -259,7 +259,7 @@ def clientthread(conn):
             activate()
         elif (MyData[0] == 'L'):
             love()
-        elif (MyData[0] == "S"): ## Управление сервоприводами
+        elif (MyData[0] == "S"): ## РЈРїСЂР°РІР»РµРЅРёРµ СЃРµСЂРІРѕРїСЂРёРІРѕРґР°РјРё
                 tmp = MyData[1:].split("/")
                 tmp2 = tmp[0].split('_')
                 if (len(tmp) == 2):
@@ -269,7 +269,7 @@ def clientthread(conn):
                                 CURR[tmp[0]] = int(float(tmp[1]))
                         except Exception as e:
                                 print(e)
-        elif (MyData[0] == 'C'): ## Управление цветом.
+        elif (MyData[0] == 'C'): ## РЈРїСЂР°РІР»РµРЅРёРµ С†РІРµС‚РѕРј.
                 s = MyData[1:].split('_')
                 colorWipe(strip,Color(int(float(s[0])),int(float(s[1])),int(float(s[2]))))
         elif (MyData[0] == 'M'):
