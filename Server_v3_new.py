@@ -85,12 +85,12 @@ def slow_moove(servo_name,servo_id,position,pause = 0.5):
         if (position > CURR[servo_name+'_'+servo_id]):
                 while (position > CURR[servo_name+'_'+servo_id]):
                         print(CURR[servo_name+'_'+servo_id])
-                        Names[servo_name].setServo(int(servo_id),curr_pos+1)
+                        Names[servo_name].setServo(int(servo_id),CURR[servo_name+'_'+servo_id]+1)
                         CURR[servo_name+'_'+servo_id] += 1
                         time.sleep(pause)
         elif (position < CURR[servo_name+'_'+servo_id]):
                 while (position < CURR[servo_name+'_'+servo_id]):
-                        Names[servo_name].setServo(servo_id,curr_pos-1)
+                        Names[servo_name].setServo(servo_id,CURR[servo_name+'_'+servo_id]-1)
                         CURR[servo_name+'_'+servo_id] -= 1
                         time.sleep(pause)                
 
