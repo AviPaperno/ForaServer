@@ -82,14 +82,14 @@ except:
 def slow_moove(servo_name,servo_id,position,pause = 0.5):
         global Names
         global CURR
-        curr_pos = CURR[servo_name+'_'+servo_id]
-        if (position > curr_pos):
-                while (position > curr_pos):
-                        Names[servo_name].setServo(servo_id,curr_pos+1)
+        if (position > CURR[servo_name+'_'+servo_id]):
+                while (position > CURR[servo_name+'_'+servo_id]):
+                        print(CURR[servo_name+'_'+servo_id])
+                        Names[servo_name].setServo(int(servo_id),curr_pos+1)
                         CURR[servo_name+'_'+servo_id] += 1
                         time.sleep(pause)
-        elif (position < curr_pos):
-                while (position < curr_pos):
+        elif (position < CURR[servo_name+'_'+servo_id]):
+                while (position < CURR[servo_name+'_'+servo_id]):
                         Names[servo_name].setServo(servo_id,curr_pos-1)
                         CURR[servo_name+'_'+servo_id] -= 1
                         time.sleep(pause)                
@@ -101,7 +101,7 @@ def move(data):
                 tmp = servos[i].split('_')
                 try:
                         ##Names[tmp[0]].setServo(int(tmp[1]),int(float(position[i])))
-                        slow_moove(tmp[0],tmp[1],position[i], pause)
+                        slow_moove(tmp[0],int(tmp[1]),position[i], pause)
                 except Exception as e:
                         print(e)
 
