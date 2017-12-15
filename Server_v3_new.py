@@ -15,17 +15,21 @@ except:
 
 from collections import namedtuple
 
-INIT_STATUS = [] ## Ð¡Ñ‚Ð°Ñ‚ÑƒÑ Ð¿Ð¾Ð´ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ñ Ð¼Ð¾Ð´ÑƒÐ»ÐµÐ¹
+INIT_STATUS = [] ## Ñòàòóñ ïîäêëþ÷åíèÿ ìîäóëåé
 
-Names = {} ## PCA Ð¼Ð¾Ð´ÑƒÐ»Ð¸ Ð¿Ð¾ Ð¸Ð¼ÐµÐ½Ð°Ð¼
+Names = {} ## PCA ìîäóëè ïî èìåíàì
 
 S = namedtuple('S',['servo_name','pos'])
 
 INIT = [S(servo_name='head_1', pos=36), S(servo_name='head_2', pos=47), S(servo_name='head_3', pos=42), S(servo_name='head_4', pos=45), S(servo_name='head_5', pos=27), S(servo_name='left_2', pos=55), S(servo_name='right_2', pos=20), S(servo_name='left_3', pos=15), S(servo_name='right_3', pos=60), S(servo_name='left_4', pos=35), S(servo_name='right_4', pos=30)]
 ARR = [S(servo_name='head_5', pos=39), S(servo_name='head_4', pos=31), S(servo_name='right_2', pos=24), S(servo_name='right_3', pos=28), S(servo_name='right_4', pos=40), S(servo_name='left_2', pos=42), S(servo_name='left_3', pos=53), S(servo_name='left_4', pos=21)]
 
-## Ð¡Ð»ÐµÐ´ÑƒÑŽÑ‰Ð¸Ð¹ Ð±Ð»Ð¾Ðº ÐºÐ¾Ð´Ð° Ð¾Ñ‚Ð²ÐµÑ‡Ð°ÐµÑ‚ Ð·Ð° Ð¿Ð¾Ð´ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ PCA.
+## Ñëåäóþùèé áëîê êîäà îòâå÷àåò çà ïîäêëþ÷åíèå PCA.
 
+CURR = {}
+
+for i in INIT:
+        CURR[i.servo_name] = i.pos
 
 try:
         pwm_head = PCA9685(address=0x40)
@@ -49,15 +53,15 @@ except:
         INIT_STATUS.append("NO")
 
 
-## Ð—Ð°Ð´Ð°Ñ‘Ð¼ Ñ…Ð¾ÑÑ‚, Ð¸ Ð¿Ð¾Ñ€Ñ‚. ÐŸÑƒÑÑ‚Ñ‹Ðµ ÐºÐ°Ð²Ñ‹Ñ‡ÐºÐ¸ Ñ€Ð°Ð²Ð½Ð¾ÑÐ¸Ð»ÑŒÐ½Ñ‹ localhost
+## Çàäà¸ì õîñò, è ïîðò. Ïóñòûå êàâû÷êè ðàâíîñèëüíû localhost
 HOST = ''
 PORT = 8888
 
-## Ð—Ð°Ð´Ð°Ñ‘Ð¼ Ð¿ÐµÑ€ÐµÐ¼ÐµÐ½Ð½ÑƒÑŽ Serial-Ð¿Ð¾Ñ€Ñ‚Ð°. Ð”Ð»Ñ ÑƒÐ¿Ð°Ñ€Ð²Ð»ÐµÐ½Ð¸Ñ Ð³Ð»Ð°Ð·Ð°Ð¼Ð¸
+## Çàäà¸ì ïåðåìåííóþ Serial-ïîðòà. Äëÿ óïàðâëåíèÿ ãëàçàìè
 ser = '' 
 
 try:
-## Ð—Ð°Ð´Ð°Ñ‘Ð¼ Ð¿ÐµÑ€ÐµÐ¼ÐµÐ½Ð½Ñ‹Ðµ, Ð½ÐµÐ¾Ð±Ñ…Ð¾Ð´Ð¼Ñ‹Ðµ Ð´Ð»Ñ ÑƒÐ¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ñ Ð¿Ð¾Ð´ÑÐ²ÐµÑ‚ÐºÐ¾Ð¹.
+## Çàäà¸ì ïåðåìåííûå, íåîáõîäìûå äëÿ óïðàâëåíèÿ ïîäñâåòêîé.
         LED_COUNT      = 16      # Number of LED pixels.
         #LED_PIN        = 22      # GPIO pin connected to the pixels (18 uses PWM!).
         LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
@@ -69,21 +73,38 @@ try:
         LED_STRIP      = ws.WS2811_STRIP_GRB   # Strip type and colour ordering
 except:
         pass
-## ÐŸÐ¾Ð´ÐºÐ»ÑŽÑ‡Ð°ÐµÐ¼ ÐºÐ°Ð¼ÐµÑ€Ñƒ
+## Ïîäêëþ÷àåì êàìåðó
 try:
         camera = picamera.PiCamera()
 except:
         pass
 
-def move(servos,positions,pause):
+def slow_moove(servo_name,servo_id,position,pause = 0.5):
+        global Names
+        global CURR
+        curr_pos = CURR[servo_name+'_'+servo_id]
+        if (position > curr_pos):
+                while (position > cuur_pos):
+                        Names[servo_name].setServo(servo_id,curr_pos+1)
+                        CURR[servo_name+'_'+servo_id] += 1
+                        time.sleep(pause)
+        elif (position < curr_pos):
+                while (position < cuur_pos):
+                        Names[servo_name].setServo(servo_id,curr_pos-1)
+                        CURR[servo_name+'_'+servo_id] -= 1
+                        time.sleep(pause)                
+
+def move(data):
+        servos,positions, pause = data
         global Names
         for i in range(len(servos)):
                 tmp = servos[i].split('_')
                 try:
-                        Names[tmp[0]].setServo(int(tmp[1]),int(float(position[i])))
+                        ##Names[tmp[0]].setServo(int(tmp[1]),int(float(position[i])))
+                        slow_moove(tmp[0],tmp[1],position[i], pause)
                 except Exception as e:
                         print(e)
-                time.sleep(pause)
+
 
 def decoder(Temp_String):
         Temp_String = Temp_String.replace('],',']/')
@@ -126,7 +147,7 @@ def run_script(FileName):
                 
 
 def colorWipe(strip, color, wait_ms=50):
-        ''' Ð¤ÑƒÐ½ÐºÑ†Ð¸Ñ Ð¾Ð´Ð½Ð¾Ð²Ñ€ÐµÐ¼ÐµÐ½Ð½Ð¾ Ð²ÐºÐ»ÑŽÑ‡Ð°ÐµÑ‚ Ð²ÑÐµ ÑÐ²ÐµÑ‚Ð¾Ð´Ð¸Ð¾Ð´Ñ‹ Ð·Ð°Ð´Ð°Ð½Ð½Ð¾Ð³Ð¾ Ñ†Ð²ÐµÑ‚Ð° '''
+        ''' Ôóíêöèÿ îäíîâðåìåííî âêëþ÷àåò âñå ñâåòîäèîäû çàäàííîãî öâåòà '''
         for i in range(strip.numPixels()):
                 strip.setPixelColor(i, color)
         strip.show()
@@ -137,7 +158,7 @@ def find_pos(name,servo_num, arr = INIT):
                 if (i.servo_name==tmp):
                         return i.pos
 
-## ÐŸÑ‹Ñ‚Ð°ÐµÐ¼ÑÑ Ð¿Ñ€Ð¾Ð¸Ð½Ð¸Ñ†Ð¸Ð°Ð»Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ ÑÐµÑ€Ð²Ð¾Ð¿Ñ€Ð¸Ð²Ð¾Ð´Ñ‹
+## Ïûòàåìñÿ ïðîèíèöèàëèðîâàòü ñåðâîïðèâîäû
 
 def play_music(file_name):
         try:
@@ -155,12 +176,12 @@ def love():
                 for i in range(2,5):
                         Names['right'].setServo(i,find_pos('right',i,ARR))
         except:
-                print('OÑˆÐ¸Ð±ÐºÐ°: ', sys.exc_info()[0])
+                print('Oøèáêà: ', sys.exc_info()[0])
         print('Love position end')
 
         
 
-## Ð¡Ð¾Ð·Ð´Ð°Ñ‘Ð¼ Ð¸ Ð¿Ñ€Ð¾Ð²ÐµÑ€ÑÐµÐ¼ Ð¿Ð¾Ð´ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ ÑÐ²ÐµÑ‚Ð¾Ð´Ð¸Ð¾Ð´Ð¾Ð²
+## Ñîçäà¸ì è ïðîâåðÿåì ïîäêëþ÷åíèå ñâåòîäèîäîâ
 try:
         strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
 except:
@@ -172,12 +193,12 @@ try:
 except:
         INIT_STATUS.append("NO")
 
-## Ð¡Ð¾Ð·Ð´Ð°Ñ‘Ð¼ ÑÐ¾ÐºÐµÑ‚
+## Ñîçäà¸ì ñîêåò
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print('Socket created')
 
 
-## ÐŸÑ‹Ñ‚Ð°ÐµÐ¼ÑÑ Ð¿Ð¾Ð´ÐºÐ»ÑŽÑ‡Ð¸Ñ‚ÑŒÑÑ Ðº Teensy, Ð¿Ð¾ Serial-Ð¿Ð¾Ñ€Ñ‚Ñƒ
+## Ïûòàåìñÿ ïîäêëþ÷èòüñÿ ê Teensy, ïî Serial-ïîðòó
 try:
     ser = serial.Serial()
     ser.port = '/dev/ttyACM0'
@@ -188,7 +209,7 @@ except:
     INIT_STATUS.append("NO")
 
 
-## Ð—Ð°Ð¿ÑƒÑÐºÐ°ÐµÐ¼ Ð¾Ð±Ñ€Ð°Ð±Ð¾Ñ‚Ñ‡Ð¸Ðº ÑÐ¾ÐºÐµÑ‚Ð¾Ð²
+## Çàïóñêàåì îáðàáîò÷èê ñîêåòîâ
 try:
     s.bind((HOST, PORT))
 except socket.error as msg:
@@ -202,7 +223,7 @@ print('Socket bind complete')
 s.listen(10)
 print ('Socket now listening')
 
-## Ð’Ñ‹Ð²Ð¾Ð´Ð¸Ð¼ ÑÑ‚Ð°Ñ‚ÑƒÑ Ð¿Ð¾Ð´ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ñ
+## Âûâîäèì ñòàòóñ ïîäêëþ÷åíèÿ
 print("Status of connection: \n PWM (0x40) - {}\n PWM (0x41) - {}\n PWM (0x42) - {}\n LEDs - {} \n Serial - {}\n".format(*INIT_STATUS))
 
 
@@ -218,16 +239,16 @@ def clientthread(conn):
         data = conn.recv(1024)
         MyData = (data.decode("utf-8").strip())
 
-        if (MyData[0] == "E"): ##Ð”Ð²Ð¸Ð¶ÐµÐ½Ð¸Ðµ Ð³Ð»Ð°Ð· Ð¿Ð¾ Ð³Ð¾Ñ€Ð¸Ð·Ð¾Ð½Ñ‚Ð°Ð»Ð¸
+        if (MyData[0] == "E"): ##Äâèæåíèå ãëàç ïî ãîðèçîíòàëè
             s = MyData[1:]+"g"
             ser.write(s.encode('utf-8')) 
-        elif (MyData[0] == "V"): ##Ð”Ð²Ð¸Ð¶ÐµÐ½Ð¸Ðµ Ð³Ð»Ð°Ð· Ð¿Ð¾ Ð²ÐµÑ€Ñ‚Ð¸ÐºÐ°Ð»Ð¸
+        elif (MyData[0] == "V"): ##Äâèæåíèå ãëàç ïî âåðòèêàëè
             s = MyData[1:]+"v"
             ser.write(s.encode('utf-8'))
         elif (MyData[0] == "n"):
-            ser.write('n'.encode('utf-8')) ##ÐŸÐµÑ€ÐµÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ Ð¼ÐµÐ¶Ð´Ñƒ Ð°Ð²Ñ‚Ð¾Ð¼Ð°Ñ‚Ð¸Ñ‡ÐµÑÐºÐ¸Ð¼ Ð´Ð²Ð¸Ð¶ÐµÐ½Ð¸ÐµÐ¼ Ð¸ Ñ€ÑƒÑ‡Ð½Ñ‹Ð¼ ÑƒÐ¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸ÐµÐ¼ Ð³Ð»Ð°Ð·
+            ser.write('n'.encode('utf-8')) ##Ïåðåêëþ÷åíèå ìåæäó àâòîìàòè÷åñêèì äâèæåíèåì è ðó÷íûì óïðàâëåíèåì ãëàç
         elif (MyData[0] == "h"):
-            ser.write('h'.encode('utf-8')) ##ÐŸÐµÑ€ÐµÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ Ð¼ÐµÐ¶Ð´Ñƒ Ð³Ð»Ð°Ð·Ð°Ð¼Ð¸ Ð¸ ÐºÐ°Ñ€Ñ‚Ð¸Ð½Ð¾ÐºÐ¾Ð¹ Ñ ÑÐµÑ€Ð´Ñ†ÐµÐ¼
+            ser.write('h'.encode('utf-8')) ##Ïåðåêëþ÷åíèå ìåæäó ãëàçàìè è êàðòèíîêîé ñ ñåðäöåì
         elif (MyData[0] == "b"):
             ser.write('b'.encode('utf-8'))
         elif (MyData[0] == "l"):
@@ -238,16 +259,17 @@ def clientthread(conn):
             activate()
         elif (MyData[0] == 'L'):
             love()
-        elif (MyData[0] == "S"): ## Ð£Ð¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ðµ ÑÐµÑ€Ð²Ð¾Ð¿Ñ€Ð¸Ð²Ð¾Ð´Ð°Ð¼Ð¸
+        elif (MyData[0] == "S"): ## Óïðàâëåíèå ñåðâîïðèâîäàìè
                 tmp = MyData[1:].split("/")
                 tmp2 = tmp[0].split('_')
                 if (len(tmp) == 2):
                         print("tmp: {}\ntmp2: {}".format(tmp,tmp2))
                         try:
                                 Names[tmp2[0]].setServo(int(tmp2[1]),int(float(tmp[1])))
+                                CURR[tmp[0]] = int(float(tmp[1]))
                         except Exception as e:
                                 print(e)
-        elif (MyData[0] == 'C'): ## Ð£Ð¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ðµ Ñ†Ð²ÐµÑ‚Ð¾Ð¼.
+        elif (MyData[0] == 'C'): ## Óïðàâëåíèå öâåòîì.
                 s = MyData[1:].split('_')
                 colorWipe(strip,Color(int(float(s[0])),int(float(s[1])),int(float(s[2]))))
         elif (MyData[0] == 'M'):
