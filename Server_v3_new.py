@@ -22,6 +22,8 @@ Names = {} ## PCA модули по именам
 
 S = namedtuple('S',['servo_name','pos'])
 
+Stat_of_eye = False
+
 INIT = [S(servo_name='head_1', pos=36), S(servo_name='head_2', pos=47), S(servo_name='head_3', pos=42), S(servo_name='head_4', pos=45), S(servo_name='head_5', pos=27), S(servo_name='left_2', pos=55), S(servo_name='right_2', pos=20), S(servo_name='left_3', pos=15), S(servo_name='right_3', pos=60), S(servo_name='left_4', pos=35), S(servo_name='right_4', pos=30)]
 ARR = [S(servo_name='head_5', pos=39), S(servo_name='head_4', pos=31), S(servo_name='right_2', pos=24), S(servo_name='right_3', pos=28), S(servo_name='right_4', pos=40), S(servo_name='left_2', pos=42), S(servo_name='left_3', pos=53), S(servo_name='left_4', pos=21)]
 
@@ -147,12 +149,15 @@ def activate():
                 CURR[i.servo_name] = i.pos
         
 
+def init_eye():
+        global ser
+        ser.write('n'.encode('utf-8'))
+
 def change_eye(line):
         global ser
         if 'love' or 'normal' in line:
                 ser.write('h'.encode('utf-8'))
         else:
-                ser.write('n'.encode('utf-8'))
                 tmp = line.split('(')[1].split(')')[0]
                 ser.write(tmp.encode('utf-8'))
 
@@ -170,7 +175,10 @@ def run_script(FileName):
                 elif 'init' in line:
                         Slow_activate()
                 elif 'eye' in line:
-                        change_eye(line)
+                        if 'activ' in line:
+                                init_eye()
+                        else:
+                                change_eye(line)
                         
                 
                 
