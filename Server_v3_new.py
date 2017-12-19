@@ -179,6 +179,11 @@ def run_script(FileName):
                                 init_eye()
                         else:
                                 change_eye(line)
+                elif 'say' in line:
+                	    data1 = line.split('(')[1].split(')')[0]
+                	    tts=gTTS(text=data1, lang='ru')        
+                        tts.save('say.mp3')
+                        play_music('say.mp3')
                         
                 
                 
