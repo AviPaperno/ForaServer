@@ -180,8 +180,8 @@ def run_script(FileName):
                         else:
                                 change_eye(line)
                 elif 'say' in line:
-                	    data1 = line.split('(')[1].split(')')[0]
-                	    tts=gTTS(text=data1, lang='ru')        
+                        data1 = line.split('(')[1].split(')')[0]
+                        tts=gTTS(text=data1, lang='en')        
                         tts.save('say.mp3')
                         play_music('say.mp3')
                         
