@@ -163,9 +163,11 @@ def change_eye(line):
 
 
 def run_script(FileName):
+        print('RUN')
         try:
-                input_file = open(FileName)
-        except:
+                input_file = open(FileName, 'r')
+        except Exception as e:
+                print('Exeption',e)
                 return
         for line in input_file:
                 if 'moove' in line:
