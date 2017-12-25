@@ -276,8 +276,6 @@ print("Status of connection: \n PWM (0x40) - {}\n PWM (0x41) - {}\n PWM (0x42) -
 # Function for handling connections. This will be used to create threads
 def clientthread(conn):
     # Sending message to connected client
-    conn.sendall(b'Welcome to the server. Type something and hit enter\n')  # send only takes string
-
     # infinite loop so that function do not terminate and thread do not end.
     while True:
 
@@ -325,7 +323,8 @@ def clientthread(conn):
         elif ('RUN' in MyData):
                 tmp = MyData[3]
                 run_script("Scripts/"+tmp+".rc")
-        elif ('SCR' in MyData):
+        elif (MyData[0:5] == 'USRSC'):
+                print(1)
                 tmp = MyData[3]
                 run_script("Uscripts/"+tmp+".rc")
         elif (MyData =='photo'):
