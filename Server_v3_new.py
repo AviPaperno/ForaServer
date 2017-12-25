@@ -186,6 +186,8 @@ def run_script(FileName):
                         tts=gTTS(text=data1, lang='en')        
                         tts.save('say.mp3')
                         play_music('say.mp3')
+        return ##ToDo
+
                         
                 
                 
@@ -323,6 +325,9 @@ def clientthread(conn):
         elif ('RUN' in MyData):
                 tmp = MyData[3]
                 run_script("Scripts/"+tmp+".rc")
+        elif ('SCR' in MyData):
+                tmp = MyData[3]
+                run_script("Uscripts/"+tmp+".rc")
         elif (MyData =='photo'):
                 camera.capture('/photo/image.jpg')
         elif (MyData[0] == '@'):
