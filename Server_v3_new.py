@@ -325,7 +325,7 @@ def clientthread(conn):
                 run_script("Scripts/"+tmp+".rc")
         elif (MyData[0:5] == 'USRSC'):
                 print(1)
-                tmp = MyData[3]
+                tmp = MyData[5]
                 run_script("Uscripts/"+tmp+".rc")
         elif (MyData =='photo'):
                 camera.capture('/photo/image.jpg')
