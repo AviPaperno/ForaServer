@@ -2,6 +2,7 @@ try:
         import socket
         import os
         import sys
+        import pyttsx3
         from _thread import *
         from neopixel import *
         import time
@@ -10,7 +11,6 @@ try:
         from multiprocessing import Process
         import picamera
         import subprocess
-        from gtts import gTTS
 except:
         pass
 
@@ -23,6 +23,8 @@ Names = {} ## PCA модули по именам
 S = namedtuple('S',['servo_name','pos'])
 
 Stat_of_eye = False
+
+engine = pyttsx3.init()
 
 INIT = [S(servo_name='head_1', pos=36), S(servo_name='head_2', pos=47), S(servo_name='head_3', pos=42), S(servo_name='head_4', pos=45), S(servo_name='head_5', pos=27), S(servo_name='left_2', pos=55), S(servo_name='right_2', pos=20), S(servo_name='left_3', pos=15), S(servo_name='right_3', pos=60), S(servo_name='left_4', pos=35), S(servo_name='right_4', pos=30)]
 ARR = [S(servo_name='head_5', pos=39), S(servo_name='head_4', pos=31), S(servo_name='right_2', pos=24), S(servo_name='right_3', pos=28), S(servo_name='right_4', pos=40), S(servo_name='left_2', pos=42), S(servo_name='left_3', pos=53), S(servo_name='left_4', pos=21)]
@@ -58,7 +60,7 @@ except:
 
 ## Задаём хост, и порт. Пустые кавычки равносильны localhost
 HOST = ''
-PORT = 8888
+PORT = 7777
 
 ## Задаём переменную Serial-порта. Для упарвления глазами
 ser = '' 
@@ -163,6 +165,7 @@ def change_eye(line):
 
 
 def run_script(FileName):
+        global engine
         print('RUN')
         try:
                 input_file = open(FileName, 'r')
@@ -182,10 +185,10 @@ def run_script(FileName):
                         else:
                                 change_eye(line)
                 elif 'say' in line:
+                        engine.stop()
                         data1 = line.split('(')[1].split(')')[0]
-                        tts=gTTS(text=data1, lang='en')        
-                        tts.save('say.mp3')
-                        play_music('say.mp3')
+                        engine.say(data1)
+                        engine.runAndWait()
         return ##ToDo
 
                         
@@ -330,10 +333,10 @@ def clientthread(conn):
         elif (MyData =='photo'):
                 camera.capture('/photo/image.jpg')
         elif (MyData[0] == '@'):
-                data1 = MyData[1:].split('_')
-                tts=gTTS(text=data1[0], lang=data1[1])        
-                tts.save('say.mp3')
-                play_music('say.mp3')
+                file = MyData[1:]
+                engine.stop()
+                engine.say(file)
+                engine.runAndWait()
         reply = data
         if not data:
             break
