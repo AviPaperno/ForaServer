@@ -189,6 +189,9 @@ def run_script(FileName):
                         data1 = line.split('(')[1].split(')')[0]
                         engine.say(data1)
                         engine.runAndWait()
+                elif 'play' in line:
+                        data1 = line.split('(')[1].split(')')[0]
+                        play_music(data1)
         return ##ToDo
 
                         
