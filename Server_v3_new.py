@@ -3,6 +3,7 @@ try:
         import os
         import sys
         import pyttsx3
+        import subprocess
         from _thread import *
         from neopixel import *
         import time
@@ -10,7 +11,6 @@ try:
         from pca9685 import *
         from multiprocessing import Process
         import picamera
-        import subprocess
 except:
         pass
 
@@ -24,7 +24,6 @@ S = namedtuple('S',['servo_name','pos'])
 
 Stat_of_eye = False
 
-engine = pyttsx3.init()
 
 INIT = [S(servo_name='head_1', pos=36), S(servo_name='head_2', pos=47), S(servo_name='head_3', pos=42), S(servo_name='head_4', pos=45), S(servo_name='head_5', pos=27), S(servo_name='left_2', pos=55), S(servo_name='right_2', pos=20), S(servo_name='left_3', pos=15), S(servo_name='right_3', pos=60), S(servo_name='left_4', pos=35), S(servo_name='right_4', pos=30)]
 ARR = [S(servo_name='head_5', pos=39), S(servo_name='head_4', pos=31), S(servo_name='right_2', pos=24), S(servo_name='right_3', pos=28), S(servo_name='right_4', pos=40), S(servo_name='left_2', pos=42), S(servo_name='left_3', pos=53), S(servo_name='left_4', pos=21)]
@@ -185,10 +184,9 @@ def run_script(FileName):
                         else:
                                 change_eye(line)
                 elif 'say' in line:
-                        engine.stop()
-                        data1 = line.split('(')[1].split(')')[0]
-                        engine.say(data1)
-                        engine.runAndWait()
+                        phrase = line.split('(')[1].split(')')[0]
+                        subprocess.call(["python3", os.path.dirname(os.path.abspath(__file__))+"/speak.py", phrase])
+
                 elif 'play' in line:
                         data1 = line.split('(')[1].split(')')[0]
                         play_music(data1)
@@ -332,14 +330,13 @@ def clientthread(conn):
         elif (MyData[0:5] == 'USRSC'):
                 print(1)
                 tmp = MyData[5]
-                run_script("Uscripts/"+tmp+".rc")
+                run_script(os.path.dirname(os.path.abspath(__file__))+"/Uscripts/"+tmp+".rc")
         elif (MyData =='photo'):
                 camera.capture('/photo/image.jpg')
         elif (MyData[0] == '@'):
-                file = MyData[1:]
-                engine.stop()
-                engine.say(file)
-                engine.runAndWait()
+                phrase = MyData[1:]
+#                print(os.listdir())
+                subprocess.call(["python3", os.path.dirname(os.path.abspath(__file__))+"/speak.py", phrase])
         reply = data
         if not data:
             break
